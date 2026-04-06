@@ -1,5 +1,5 @@
 {
-    "name": "fombuilder/dynamic-form",
+    "name": "hridoy09/dynamic-form-builder",
     "description": "Local Laravel package for building and rendering dynamic forms.",
     "type": "library",
     "license": "MIT",
