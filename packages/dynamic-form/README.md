@@ -1,125 +1,124 @@
-# Dynamic Form Package
+# Dynamic Form
 
-`fombuilder/dynamic-form` is a Laravel package for creating dynamic forms with a builder UI, rendering them in Blade, validating submissions, saving responses, and handling file uploads.
+`fombuilder/dynamic-form` is a Laravel package for building forms from a UI, rendering them in Blade, validating user input, saving submissions, and handling file uploads.
 
 ## Features
 
-- Create and edit forms from a builder page
-- Add dynamic fields such as text, email, number, textarea, select, radio, checkbox, file, and date
-- Apply Laravel validation rules per field
-- Render forms in Blade with `@dynamicForm('slug')`
-- Save submissions in the database
-- Upload and store files
-- View submission history for each form
+- Form builder UI
+- Dynamic fields
+- Laravel validation rules per field
+- Blade rendering with `@dynamicForm('slug')`
+- Submission saving
+- File upload support
+- Submission listing
 
 ## Requirements
 
-- PHP 8.3+
-- Laravel 13+
+- PHP 8.3 or newer
+- Laravel 13 or newer
 
 ## Installation
 
-Install the package with Composer:
+You can use this package in 2 ways.
+
+### Option 1: Install From Packagist
+
+If the package is already published to Packagist:
 
 ```bash
 composer require fombuilder/dynamic-form
 ```
 
-Run migrations:
+### Option 2: Install As A Local Path Package
 
-```bash
-php artisan migrate
+If the package is not published yet and you want to use it from a local folder:
+
+1. Copy the package into your Laravel project or keep it in a separate local directory.
+2. Add a path repository to your Laravel app `composer.json`:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/dynamic-form",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
+}
 ```
 
-Create the public storage symlink for uploaded files:
+3. Require the package:
 
 ```bash
-php artisan storage:link
+composer require fombuilder/dynamic-form:*
 ```
 
-Optional: publish the config file:
+If your package is outside the project, update the `url` path to match your folder.
+
+## Laravel Auto Discovery
+
+This package supports Laravel package discovery, so you do not need to manually register the service provider when installed through Composer.
+
+Service provider:
+
+```php
+FomBuilder\DynamicForm\DynamicFormServiceProvider::class
+```
+
+## Publish Assets
+
+Publish the config file:
 
 ```bash
 php artisan vendor:publish --tag=dynamic-form-config
 ```
 
-Optional: publish the views if you want to customize the UI:
+Publish the views if you want to customize the package UI:
 
 ```bash
 php artisan vendor:publish --tag=dynamic-form-views
 ```
 
-## Quick Start
+## Run Migrations
 
-1. Visit `/dynamic-forms`
-2. Create a form
-3. Add your fields and validation rules
-4. Save the form
-5. Open the public URL `/forms/{slug}`
-6. Submit the form and review saved entries from the submissions page
+Create the package tables:
 
-## Routes
-
-Admin and builder routes:
-
-- `/dynamic-forms`
-- `/dynamic-forms/create`
-- `/dynamic-forms/{form}/edit`
-- `/dynamic-forms/{form}/submissions`
-
-Public routes:
-
-- `/forms/{slug}`
-- `POST /forms/{slug}`
-
-## Blade Usage
-
-You can render a saved form directly inside any Blade file:
-
-```blade
-@dynamicForm('contact-form')
+```bash
+php artisan migrate
 ```
 
-The value should be the form slug created in the builder.
+This package creates tables for:
 
-## Validation Rules
+- forms
+- form fields
+- form submissions
 
-The package accepts normal Laravel validation rules in the field `Validation` input.
+## File Upload Setup
 
-Examples:
+If you are using the `public` disk, create the storage symlink:
 
-- `required`
-- `max:255`
-- `required|email|max:255`
-- `mimes:pdf,jpg,png|max:2048`
-
-Do not wrap rules in backticks.
-
-## File Uploads
-
-Uploaded files are stored using the configured disk:
-
-```php
-'storage_disk' => env('DYNAMIC_FORM_STORAGE_DISK', 'public'),
+```bash
+php artisan storage:link
 ```
 
-Default upload directory:
+You can also set the upload disk in your `.env`:
 
-```php
-'upload_directory' => 'dynamic-forms',
+```env
+DYNAMIC_FORM_STORAGE_DISK=public
 ```
-
-If you use the `public` disk, make sure `php artisan storage:link` has been run.
 
 ## Configuration
 
-The config file is:
+After publishing the config, you can edit:
 
 ```php
 config/dynamic-form.php
 ```
 
-Available options:
+Default configuration:
 
 ```php
 return [
@@ -132,24 +131,276 @@ return [
 ];
 ```
 
+## Routes
+
+### Builder Routes
+
+These routes are used for creating and managing forms:
+
+- `GET /dynamic-forms`
+- `GET /dynamic-forms/create`
+- `POST /dynamic-forms`
+- `GET /dynamic-forms/{form}/edit`
+- `PUT /dynamic-forms/{form}`
+- `GET /dynamic-forms/{form}/submissions`
+
+### Public Routes
+
+These routes are used for displaying and submitting forms:
+
+- `GET /forms/{slug}`
+- `POST /forms/{slug}`
+
+If you change the route prefixes in config, the URLs will change too.
+
+## How To Create A Form
+
+1. Open your browser.
+2. Visit:
+
+```text
+/dynamic-forms
+```
+
+3. Click `Create form`.
+4. Fill in:
+   - form name
+   - slug
+   - description
+   - submit button label
+   - success message
+5. Add fields.
+6. Save the form.
+
+## Available Field Types
+
+The builder currently supports:
+
+- `text`
+- `email`
+- `number`
+- `textarea`
+- `select`
+- `radio`
+- `checkbox`
+- `file`
+- `date`
+
+## Field Settings
+
+Each field can have:
+
+- label
+- field name
+- type
+- placeholder
+- help text
+- options
+- validation rules
+- required flag
+- sort order
+
+### Options
+
+For `select`, `radio`, and multi-option `checkbox` fields, enter one option per line.
+
+Example:
+
+```text
+Male
+Female
+Other
+```
+
+## Validation Rules
+
+The `Validation` input accepts normal Laravel validation rules.
+
+Examples:
+
+```text
+required
+max:255
+required|email|max:255
+nullable|mimes:pdf,jpg,png|max:2048
+required|min:10|max:500
+```
+
+Do not wrap rules in backticks.
+
+Wrong:
+
+```text
+`email`
+```
+
+Correct:
+
+```text
+email
+```
+
+## Render A Form In Blade
+
+You can render any active form in a Blade view using its slug:
+
+```blade
+@dynamicForm('contact-form')
+```
+
+Example inside a Blade page:
+
+```blade
+@extends('layouts.app')
+
+@section('content')
+    <h1>Contact Us</h1>
+
+    @dynamicForm('contact-form')
+@endsection
+```
+
+## Public Form Usage
+
+If your form slug is `contact-form`, the public form URL will be:
+
+```text
+/forms/contact-form
+```
+
+Users can open that page and submit the form.
+
+## Submission Storage
+
+Each submission is stored in the database.
+
+The package stores:
+
+- form relation
+- submitted field values
+- uploaded file metadata
+- IP address
+- user agent
+- timestamps
+
+## View Submissions
+
+To view submissions for a form:
+
+1. Open the builder page.
+2. Select the form.
+3. Click `Submissions`.
+
+You will see all saved entries for that form.
+
 ## Example Workflow
 
-1. Create a form named `Contact Form`
-2. Use slug `contact-form`
-3. Add fields like `name`, `email`, `message`, and `resume`
-4. Add validation like `required|max:255`, `required|email`, `required|min:10`, and `nullable|mimes:pdf,doc,docx|max:2048`
-5. Save and open `/forms/contact-form`
+### Example 1: Contact Form
+
+Create a form with:
+
+- `name` as `text`
+- `email` as `email`
+- `message` as `textarea`
+
+Validation examples:
+
+```text
+name: required|max:255
+email: required|email|max:255
+message: required|min:10|max:2000
+```
+
+Then render it using:
+
+```blade
+@dynamicForm('contact-form')
+```
+
+### Example 2: Job Application Form
+
+Create a form with:
+
+- `full_name` as `text`
+- `email` as `email`
+- `resume` as `file`
+
+Validation examples:
+
+```text
+full_name: required|max:255
+email: required|email|max:255
+resume: required|mimes:pdf,doc,docx|max:2048
+```
+
+## Customizing Views
+
+If you publish the views:
+
+```bash
+php artisan vendor:publish --tag=dynamic-form-views
+```
+
+You can edit the published Blade files in your application and customize the UI.
 
 ## Testing
 
-Run the package test:
+Run the package test with:
 
 ```bash
 php artisan test --filter=DynamicFormPackageTest
 ```
 
-## Notes
+## Troubleshooting
 
-- Provider auto-discovery is enabled through Composer
-- Form submissions are stored in the database
-- File metadata is stored with each submission
+### `could not find driver`
+
+This usually means your test environment is configured for SQLite but the `pdo_sqlite` extension is not enabled in PHP.
+
+Check loaded PHP modules:
+
+```bash
+php -m
+```
+
+### `Method Illuminate\Validation\Validator::validate`email` does not exist`
+
+This happens when a validation rule was entered with backticks.
+
+Wrong:
+
+```text
+`email`
+```
+
+Correct:
+
+```text
+email
+```
+
+### Uploaded files are not opening
+
+Make sure you ran:
+
+```bash
+php artisan storage:link
+```
+
+and that your disk is configured correctly.
+
+## Package Structure
+
+```text
+config/
+database/
+resources/
+routes/
+src/
+README.md
+composer.json
+```
+
+## License
+
+MIT
