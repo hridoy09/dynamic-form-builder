@@ -5,12 +5,18 @@
 @endphp
 
 <div class="field-card stack" data-field-row>
-    <div class="actions" style="justify-content: space-between;">
-        <strong>Field</strong>
+    <div class="field-toolbar">
+        <div class="field-meta">
+            <span class="field-number" data-field-number>{{ is_numeric($index) ? $index + 1 : '__INDEX__' }}</span>
+            <div>
+                <strong>Field definition</strong>
+                <div class="hint">Control the type, validation, and display order for this input.</div>
+            </div>
+        </div>
         <div class="actions">
-            <button type="button" class="button secondary" data-field-action="up">Up</button>
-            <button type="button" class="button secondary" data-field-action="down">Down</button>
-            <button type="button" class="button secondary" data-field-action="remove">Remove</button>
+            <button type="button" class="button tiny secondary" data-field-action="up">Up</button>
+            <button type="button" class="button tiny secondary" data-field-action="down">Down</button>
+            <button type="button" class="button tiny flat" data-field-action="remove">Remove</button>
         </div>
     </div>
 
@@ -67,4 +73,3 @@
         <span>Required field</span>
     </label>
 </div>
-

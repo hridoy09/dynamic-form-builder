@@ -4,14 +4,18 @@
     <form method="POST" action="{{ route('dynamic-form.admin.forms.store') }}" class="stack">
         @csrf
 
-        <div class="actions" style="justify-content: space-between;">
-            <div>
-                <h1 style="margin: 0 0 0.4rem;">Create form</h1>
-                <div class="hint">Define the form shell, add dynamic fields, and publish it when ready.</div>
-            </div>
-            <div class="actions">
-                <a class="button secondary" href="{{ route('dynamic-form.admin.forms.index') }}">Back</a>
-                <button class="button" type="submit">Save form</button>
+        <div class="hero panel">
+            <div class="toolbar">
+                <div class="section-title">
+                    <span class="eyebrow">New Form</span>
+                    <h1>Create a professional form experience</h1>
+                    <p>Define the form shell, configure dynamic fields, and publish a polished workflow for public submissions.</p>
+                </div>
+                <div class="actions">
+                    <span class="pill pill-success">Production Ready</span>
+                    <a class="button secondary" href="{{ route('dynamic-form.admin.forms.index') }}">Back</a>
+                    <button class="button" type="submit">Save form</button>
+                </div>
             </div>
         </div>
 

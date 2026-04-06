@@ -1,55 +1,101 @@
 @extends('dynamic-form::layouts.app')
 
 @section('content')
-    <div class="panel stack">
-        <div class="actions" style="justify-content: space-between;">
-            <div>
-                <h1 style="margin: 0 0 0.4rem;">Forms</h1>
-                <div class="hint">Build forms with dynamic fields, validation rules, and file upload support.</div>
+    @php
+        $totalFields = $forms->sum('fields_count');
+        $totalSubmissions = $forms->sum('submissions_count');
+    @endphp
+
+    <div class="stack">
+        <div class="hero panel">
+            <div class="toolbar">
+                <div class="section-title">
+                    <span class="eyebrow">Builder Dashboard</span>
+                    <h1>Manage forms with a production-ready workflow</h1>
+                    <p>Create, publish, and monitor forms from a single interface designed for real projects, not just demos.</p>
+                </div>
+                <div class="actions">
+                    <span class="pill pill-outline">{{ $forms->count() }} form{{ $forms->count() === 1 ? '' : 's' }}</span>
+                    <a class="button" href="{{ route('dynamic-form.admin.forms.create') }}">Create form</a>
+                </div>
             </div>
-            <a class="button" href="{{ route('dynamic-form.admin.forms.create') }}">Create form</a>
+
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-label">Total Forms</span>
+                    <span class="metric-value">{{ $forms->count() }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Configured Fields</span>
+                    <span class="metric-value">{{ $totalFields }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Captured Submissions</span>
+                    <span class="metric-value">{{ $totalSubmissions }}</span>
+                </div>
+            </div>
         </div>
 
         @if ($forms->isEmpty())
-            <div class="panel">
-                <h2 style="margin-top: 0;">No forms yet</h2>
-                <p class="hint">Create your first form to start collecting submissions.</p>
+            <div class="panel empty-state">
+                <div class="stack" style="justify-items: center;">
+                    <span class="pill pill-success">Production Ready UI</span>
+                    <h2>No forms yet</h2>
+                    <p class="hint">Create your first form to start collecting validated submissions and file uploads.</p>
+                    <div class="actions">
+                        <a class="button" href="{{ route('dynamic-form.admin.forms.create') }}">Create your first form</a>
+                    </div>
+                </div>
             </div>
         @else
-            <div class="panel" style="padding: 0;">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Slug</th>
-                            <th>Fields</th>
-                            <th>Submissions</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($forms as $form)
+            <div class="panel surface stack">
+                <div class="toolbar">
+                    <div class="section-title">
+                        <h2>Published forms</h2>
+                        <p>Every form includes field counts, submission counts, and direct actions for editing and review.</p>
+                    </div>
+                    <div class="page-footer-note">Use the public URL or the Blade directive to surface each form anywhere in your app.</div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <strong>{{ $form->name }}</strong>
-                                    @if ($form->description)
-                                        <div class="hint">{{ $form->description }}</div>
-                                    @endif
-                                </td>
-                                <td><code>{{ $form->slug }}</code></td>
-                                <td>{{ $form->fields_count }}</td>
-                                <td>{{ $form->submissions_count }}</td>
-                                <td>{{ $form->is_active ? 'Active' : 'Draft' }}</td>
-                                <td class="actions">
-                                    <a href="{{ route('dynamic-form.public.show', $form->slug) }}" target="_blank">Open</a>
-                                    <a href="{{ route('dynamic-form.admin.forms.edit', $form) }}">Edit</a>
-                                    <a href="{{ route('dynamic-form.admin.submissions.index', $form) }}">Submissions</a>
-                                </td>
+                                <th>Name</th>
+                                <th>Slug</th>
+                                <th>Fields</th>
+                                <th>Submissions</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($forms as $form)
+                                <tr>
+                                    <td>
+                                        <strong>{{ $form->name }}</strong>
+                                        @if ($form->description)
+                                            <div class="hint">{{ $form->description }}</div>
+                                        @endif
+                                    </td>
+                                    <td><code>{{ $form->slug }}</code></td>
+                                    <td>{{ $form->fields_count }}</td>
+                                    <td>{{ $form->submissions_count }}</td>
+                                    <td>
+                                        <span class="status-pill {{ $form->is_active ? 'active' : 'draft' }}">{{ $form->is_active ? 'Active' : 'Draft' }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="actions">
+                                            <a class="button tiny flat" href="{{ route('dynamic-form.public.show', $form->slug) }}" target="_blank">Open</a>
+                                            <a class="button tiny secondary" href="{{ route('dynamic-form.admin.forms.edit', $form) }}">Edit</a>
+                                            <a class="button tiny ghost" href="{{ route('dynamic-form.admin.submissions.index', $form) }}">Submissions</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         @endif
     </div>

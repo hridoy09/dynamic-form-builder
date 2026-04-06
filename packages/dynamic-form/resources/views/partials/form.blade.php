@@ -7,13 +7,18 @@
             $options = $field->optionsList();
         @endphp
 
-        <div>
-            <label for="field_{{ $field->name }}">
-                {{ $field->label }}
-                @if ($field->is_required)
-                    <span style="color: var(--accent);">*</span>
+        <div class="field-card stack" style="gap: 0.8rem;">
+            <div>
+                <label for="field_{{ $field->name }}">
+                    {{ $field->label }}
+                    @if ($field->is_required)
+                        <span style="color: var(--highlight);">*</span>
+                    @endif
+                </label>
+                @if ($field->help_text)
+                    <div class="hint">{{ $field->help_text }}</div>
                 @endif
-            </label>
+            </div>
 
             @if ($field->type === 'textarea')
                 <textarea id="field_{{ $field->name }}" name="{{ $field->name }}" placeholder="{{ $field->placeholder }}">{{ $oldValue }}</textarea>
@@ -25,9 +30,9 @@
                     @endforeach
                 </select>
             @elseif ($field->type === 'radio')
-                <div class="stack">
+                <div class="choice-list">
                     @foreach ($options as $option)
-                        <label class="inline-check">
+                        <label class="choice-item">
                             <input type="radio" name="{{ $field->name }}" value="{{ $option }}" @checked($oldValue === $option)>
                             <span>{{ $option }}</span>
                         </label>
@@ -38,9 +43,9 @@
                     @php
                         $checked = is_array($oldValue) ? $oldValue : [];
                     @endphp
-                    <div class="stack">
+                    <div class="choice-list">
                         @foreach ($options as $option)
-                            <label class="inline-check">
+                            <label class="choice-item">
                                 <input type="checkbox" name="{{ $field->name }}[]" value="{{ $option }}" @checked(in_array($option, $checked, true))>
                                 <span>{{ $option }}</span>
                             </label>
@@ -63,14 +68,11 @@
                     placeholder="{{ $field->placeholder }}"
                 >
             @endif
-
-            @if ($field->help_text)
-                <div class="hint">{{ $field->help_text }}</div>
-            @endif
         </div>
     @endforeach
 
     <div class="actions">
         <button class="button" type="submit">{{ $form->submit_label ?: 'Submit' }}</button>
+        <span class="page-footer-note">Validated and stored securely in your Laravel application.</span>
     </div>
 </form>
