@@ -4,6 +4,8 @@
     @php
         $totalFields = $forms->sum('fields_count');
         $totalSubmissions = $forms->sum('submissions_count');
+        $totalWorkflowStages = $forms->sum('workflow_steps_count');
+        $totalAutomationActions = $forms->sum('automation_actions_count');
     @endphp
 
     <div class="stack">
@@ -12,7 +14,7 @@
                 <div class="section-title">
                     <span class="eyebrow">Builder Dashboard</span>
                     <h1>Manage forms with a production-ready workflow</h1>
-                    <p>Create, publish, and monitor forms from a single interface designed for real projects, not just demos.</p>
+                    <p>Create, publish, review, and automate forms from a single interface designed for real operations, not just demos.</p>
                 </div>
                 <div class="actions">
                     <span class="pill pill-outline">{{ $forms->count() }} form{{ $forms->count() === 1 ? '' : 's' }}</span>
@@ -33,6 +35,14 @@
                     <span class="metric-label">Captured Submissions</span>
                     <span class="metric-value">{{ $totalSubmissions }}</span>
                 </div>
+                <div class="metric">
+                    <span class="metric-label">Workflow Stages</span>
+                    <span class="metric-value">{{ $totalWorkflowStages }}</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Automation Actions</span>
+                    <span class="metric-value">{{ $totalAutomationActions }}</span>
+                </div>
             </div>
         </div>
 
@@ -41,7 +51,7 @@
                 <div class="stack" style="justify-items: center;">
                     <span class="pill pill-success">Production Ready UI</span>
                     <h2>No forms yet</h2>
-                    <p class="hint">Create your first form to start collecting validated submissions and file uploads.</p>
+                    <p class="hint">Create your first form to start collecting validated submissions, approvals, and automations.</p>
                     <div class="actions">
                         <a class="button" href="{{ route('dynamic-form.admin.forms.create') }}">Create your first form</a>
                     </div>
@@ -52,7 +62,7 @@
                 <div class="toolbar">
                     <div class="section-title">
                         <h2>Published forms</h2>
-                        <p>Every form includes field counts, submission counts, and direct actions for editing and review.</p>
+                        <p>Every form includes field, workflow, notification, and automation counts with direct actions for editing and review.</p>
                     </div>
                     <div class="page-footer-note">Use the public URL or the Blade directive to surface each form anywhere in your app.</div>
                 </div>
@@ -64,6 +74,8 @@
                                 <th>Name</th>
                                 <th>Slug</th>
                                 <th>Fields</th>
+                                <th>Workflow</th>
+                                <th>Automation</th>
                                 <th>Submissions</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -80,6 +92,8 @@
                                     </td>
                                     <td><code>{{ $form->slug }}</code></td>
                                     <td>{{ $form->fields_count }}</td>
+                                    <td>{{ $form->workflow_steps_count }} stage{{ $form->workflow_steps_count === 1 ? '' : 's' }}</td>
+                                    <td>{{ $form->automation_actions_count }} action{{ $form->automation_actions_count === 1 ? '' : 's' }}</td>
                                     <td>{{ $form->submissions_count }}</td>
                                     <td>
                                         <span class="status-pill {{ $form->is_active ? 'active' : 'draft' }}">{{ $form->is_active ? 'Active' : 'Draft' }}</span>

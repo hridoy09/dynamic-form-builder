@@ -18,10 +18,16 @@ class DynamicForm extends Model
         'description',
         'submit_label',
         'success_message',
+        'workflow_definition',
+        'notification_settings',
+        'automation_settings',
         'is_active',
     ];
 
     protected $casts = [
+        'workflow_definition' => 'array',
+        'notification_settings' => 'array',
+        'automation_settings' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -35,5 +41,28 @@ class DynamicForm extends Model
     public function submissions(): HasMany
     {
         return $this->hasMany(DynamicFormSubmission::class, 'form_id')->latest();
+    }
+
+    public function workflowSteps(): array
+    {
+        return $this->configRows($this->workflow_definition);
+    }
+
+    public function notificationRules(): array
+    {
+        return $this->configRows($this->notification_settings);
+    }
+
+    public function automationActions(): array
+    {
+        return $this->configRows($this->automation_settings);
+    }
+
+    protected function configRows(?array $rows): array
+    {
+        return collect($rows ?? [])
+            ->filter(fn ($row) => is_array($row))
+            ->values()
+            ->all();
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Dynamic Form' }}</title>
+    <title>{{ $title ?? 'Dynamic Form + Workflow Builder' }}</title>
     <style>
         :root {
             --bg: #edf1ef;
@@ -187,6 +187,7 @@
         .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
         .hero {
             display: grid;
@@ -361,6 +362,101 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(245,247,246,0.92));
         }
 
+        .studio-grid,
+        .timeline,
+        .detail-grid,
+        .summary-grid,
+        .definition-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .detail-grid {
+            grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 1.35rem;
+            border-left: 1px solid rgba(38, 57, 54, 0.12);
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -0.42rem;
+            top: 0.3rem;
+            width: 0.8rem;
+            height: 0.8rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), var(--highlight));
+            box-shadow: 0 0 0 5px rgba(31, 111, 100, 0.08);
+        }
+
+        .timeline-meta,
+        .meta-line,
+        .route-preview,
+        .definition-row {
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .timeline-meta {
+            font-size: 0.9rem;
+        }
+
+        .summary-card {
+            padding: 1rem 1.1rem;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(247,248,246,0.94));
+        }
+
+        .summary-label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .summary-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+        }
+
+        .callout-card {
+            padding: 1.1rem;
+            border-radius: 18px;
+            border: 1px solid rgba(31, 111, 100, 0.12);
+            background: linear-gradient(180deg, rgba(31, 111, 100, 0.08), rgba(214, 162, 94, 0.08));
+        }
+
+        .stack-tight {
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .code-block {
+            margin: 0;
+            padding: 0.95rem;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(24, 36, 35, 0.04);
+            font-family: Consolas, "Cascadia Code", monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         .field-card {
             padding: 1.15rem;
             border: 1px solid var(--line);
@@ -394,6 +490,74 @@
             background: var(--accent-soft);
             color: var(--accent-dark);
             font-weight: 800;
+        }
+
+        .option-builder {
+            padding: 0.95rem;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .option-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .option-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(31, 111, 100, 0.12);
+            background: rgba(31, 111, 100, 0.08);
+            color: var(--accent-dark);
+            font-size: 0.88rem;
+            line-height: 1.2;
+        }
+
+        .option-pill strong {
+            font-size: 0.9rem;
+        }
+
+        .option-pill span {
+            color: var(--muted);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            background: rgba(24, 36, 35, 0.4);
+            backdrop-filter: blur(12px);
+            z-index: 60;
+        }
+
+        .modal-backdrop[hidden] {
+            display: none;
+        }
+
+        .modal-shell {
+            width: min(760px, 100%);
+            max-height: min(88vh, 920px);
+            overflow: auto;
+            padding: 1.35rem;
+        }
+
+        .option-editor-list {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .option-editor-row {
+            padding: 0.95rem;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,249,248,0.92));
         }
 
         .inline-check,
@@ -498,6 +662,32 @@
             color: #7b531f;
         }
 
+        .status-pill.review,
+        .status-pill.in_review {
+            background: rgba(31, 111, 100, 0.12);
+            color: var(--accent-dark);
+        }
+
+        .status-pill.approved {
+            background: rgba(29, 91, 67, 0.12);
+            color: #1d5b43;
+        }
+
+        .status-pill.rejected {
+            background: rgba(156, 54, 45, 0.14);
+            color: var(--danger-text);
+        }
+
+        .status-pill.completed {
+            background: rgba(25, 83, 128, 0.14);
+            color: #195380;
+        }
+
+        .status-pill.submitted {
+            background: rgba(123, 83, 31, 0.16);
+            color: #7b531f;
+        }
+
         .empty-state {
             padding: 2rem;
             text-align: center;
@@ -519,7 +709,10 @@
 
             .grid-2,
             .grid-3,
-            .metric-grid {
+            .metric-grid,
+            .summary-grid,
+            .detail-grid,
+            .kpi-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -546,10 +739,10 @@
             <div class="brand-block">
                 <span class="eyebrow">Laravel Package UI</span>
                 <div class="brand-row">
-                    <div class="brand">Dynamic Form Builder</div>
+                    <div class="brand">Dynamic Form + Workflow Builder</div>
                     <span class="pill pill-success">Production Ready</span>
                 </div>
-                <p class="lede">Create forms, render them in Blade, collect files, and review submissions from one production-focused workflow.</p>
+                <p class="lede">Create forms, route submissions through approvals, notify teams, and fire API or webhook automations from one polished builder.</p>
             </div>
             <div class="nav">
                 <a class="button ghost" href="{{ route('dynamic-form.admin.forms.index') }}">Builder</a>

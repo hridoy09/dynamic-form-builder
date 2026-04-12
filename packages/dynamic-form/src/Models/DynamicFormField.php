@@ -35,8 +35,45 @@ class DynamicFormField extends Model
         return $this->belongsTo(DynamicForm::class, 'form_id');
     }
 
+    public function normalizedOptions(): array
+    {
+        return collect($this->options ?? [])
+            ->map(function ($option) {
+                if (is_array($option)) {
+                    $label = trim((string) ($option['label'] ?? $option['name'] ?? $option['value'] ?? ''));
+                    $value = trim((string) ($option['value'] ?? $option['label'] ?? $option['name'] ?? ''));
+
+                    if ($label === '' && $value === '') {
+                        return null;
+                    }
+
+                    return [
+                        'label' => $label !== '' ? $label : $value,
+                        'value' => $value !== '' ? $value : $label,
+                    ];
+                }
+
+                $value = trim((string) $option);
+
+                if ($value === '') {
+                    return null;
+                }
+
+                return [
+                    'label' => $value,
+                    'value' => $value,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
     public function optionsList(): array
     {
-        return array_values(array_filter($this->options ?? [], fn ($value) => $value !== null && $value !== ''));
+        return collect($this->normalizedOptions())
+            ->pluck('value')
+            ->values()
+            ->all();
     }
 }

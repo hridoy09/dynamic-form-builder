@@ -8,8 +8,8 @@
             <div class="toolbar">
                 <div class="section-title">
                     <span class="eyebrow">New Form</span>
-                    <h1>Create a professional form experience</h1>
-                    <p>Define the form shell, configure dynamic fields, and publish a polished workflow for public submissions.</p>
+                    <h1>Create a professional intake workflow</h1>
+                    <p>Define the form shell, configure dynamic fields, map approvals, and publish automations for public submissions.</p>
                 </div>
                 <div class="actions">
                     <span class="pill pill-success">Production Ready</span>

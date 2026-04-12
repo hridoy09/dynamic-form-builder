@@ -3,7 +3,10 @@
 namespace FomBuilder\DynamicForm;
 
 use FomBuilder\DynamicForm\Services\DynamicFormRenderer;
+use FomBuilder\DynamicForm\Services\DynamicFormAutomationService;
+use FomBuilder\DynamicForm\Services\DynamicFormSubmissionActivityService;
 use FomBuilder\DynamicForm\Services\DynamicFormSubmissionService;
+use FomBuilder\DynamicForm\Services\DynamicFormWorkflowService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,8 +16,11 @@ class DynamicFormServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/dynamic-form.php', 'dynamic-form');
 
-        $this->app->singleton(DynamicFormRenderer::class, fn () => new DynamicFormRenderer());
-        $this->app->singleton(DynamicFormSubmissionService::class, fn () => new DynamicFormSubmissionService());
+        $this->app->singleton(DynamicFormRenderer::class);
+        $this->app->singleton(DynamicFormSubmissionActivityService::class);
+        $this->app->singleton(DynamicFormAutomationService::class);
+        $this->app->singleton(DynamicFormWorkflowService::class);
+        $this->app->singleton(DynamicFormSubmissionService::class);
     }
 
     public function boot(): void

@@ -15,6 +15,8 @@ Route::middleware(config('dynamic-form.route_middleware', ['web']))
         Route::get('/{form}/edit', [AdminFormController::class, 'edit'])->name('forms.edit');
         Route::put('/{form}', [AdminFormController::class, 'update'])->name('forms.update');
         Route::get('/{form}/submissions', [SubmissionController::class, 'index'])->name('submissions.index');
+        Route::get('/{form}/submissions/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
+        Route::patch('/{form}/submissions/{submission}', [SubmissionController::class, 'update'])->name('submissions.update');
     });
 
 Route::middleware(config('dynamic-form.public_route_middleware', ['web']))

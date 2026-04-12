@@ -12,6 +12,11 @@ use Illuminate\Validation\Rule;
 
 class DynamicFormSubmissionService
 {
+    public function __construct(
+        protected DynamicFormWorkflowService $workflowService,
+    ) {
+    }
+
     public function validate(Request $request, DynamicForm $form): array
     {
         $form->loadMissing('fields');
@@ -49,11 +54,14 @@ class DynamicFormSubmissionService
             $payload[$field->name] = Arr::get($validated, $field->name);
         }
 
-        return $form->submissions()->create([
+        $submission = $form->submissions()->create([
             'data' => $payload,
+            'status' => 'submitted',
             'ip_address' => $request->ip(),
             'user_agent' => (string) $request->userAgent(),
         ]);
+
+        return $this->workflowService->initialize($submission);
     }
 
     public function rules(DynamicForm $form): array

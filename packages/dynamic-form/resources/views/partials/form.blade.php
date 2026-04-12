@@ -4,7 +4,7 @@
     @foreach ($form->fields as $field)
         @php
             $oldValue = old($field->name);
-            $options = $field->optionsList();
+            $options = $field->normalizedOptions();
         @endphp
 
         <div class="field-card stack" style="gap: 0.8rem;">
@@ -26,15 +26,15 @@
                 <select id="field_{{ $field->name }}" name="{{ $field->name }}">
                     <option value="">Select an option</option>
                     @foreach ($options as $option)
-                        <option value="{{ $option }}" @selected($oldValue === $option)>{{ $option }}</option>
+                        <option value="{{ $option['value'] }}" @selected($oldValue === $option['value'])>{{ $option['label'] }}</option>
                     @endforeach
                 </select>
             @elseif ($field->type === 'radio')
                 <div class="choice-list">
                     @foreach ($options as $option)
                         <label class="choice-item">
-                            <input type="radio" name="{{ $field->name }}" value="{{ $option }}" @checked($oldValue === $option)>
-                            <span>{{ $option }}</span>
+                            <input type="radio" name="{{ $field->name }}" value="{{ $option['value'] }}" @checked($oldValue === $option['value'])>
+                            <span>{{ $option['label'] }}</span>
                         </label>
                     @endforeach
                 </div>
@@ -46,8 +46,8 @@
                     <div class="choice-list">
                         @foreach ($options as $option)
                             <label class="choice-item">
-                                <input type="checkbox" name="{{ $field->name }}[]" value="{{ $option }}" @checked(in_array($option, $checked, true))>
-                                <span>{{ $option }}</span>
+                                <input type="checkbox" name="{{ $field->name }}[]" value="{{ $option['value'] }}" @checked(in_array($option['value'], $checked, true))>
+                                <span>{{ $option['label'] }}</span>
                             </label>
                         @endforeach
                     </div>

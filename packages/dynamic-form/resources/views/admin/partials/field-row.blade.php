@@ -1,37 +1,37 @@
 @php
     $optionsValue = is_array($field['options'] ?? null)
-        ? implode(PHP_EOL, $field['options'])
+        ? json_encode($field['options'], JSON_UNESCAPED_UNICODE)
         : ($field['options'] ?? '');
 @endphp
 
-<div class="field-card stack" data-field-row>
+<div class="field-card stack" data-repeater-row>
     <div class="field-toolbar">
         <div class="field-meta">
-            <span class="field-number" data-field-number>{{ is_numeric($index) ? $index + 1 : '__INDEX__' }}</span>
+            <span class="field-number" data-repeater-number>{{ is_numeric($index) ? $index + 1 : '__INDEX__' }}</span>
             <div>
                 <strong>Field definition</strong>
                 <div class="hint">Control the type, validation, and display order for this input.</div>
             </div>
         </div>
         <div class="actions">
-            <button type="button" class="button tiny secondary" data-field-action="up">Up</button>
-            <button type="button" class="button tiny secondary" data-field-action="down">Down</button>
-            <button type="button" class="button tiny flat" data-field-action="remove">Remove</button>
+            <button type="button" class="button tiny secondary" data-repeater-action="up">Up</button>
+            <button type="button" class="button tiny secondary" data-repeater-action="down">Down</button>
+            <button type="button" class="button tiny flat" data-repeater-action="remove">Remove</button>
         </div>
     </div>
 
     <div class="grid-3">
         <div>
             <label for="fields_{{ $index }}_label">Label</label>
-            <input data-field-input id="fields_{{ $index }}_label" name="fields[{{ $index }}][label]" value="{{ $field['label'] ?? '' }}" required>
+            <input data-repeater-input id="fields_{{ $index }}_label" name="fields[{{ $index }}][label]" value="{{ $field['label'] ?? '' }}" required>
         </div>
         <div>
             <label for="fields_{{ $index }}_name">Field name</label>
-            <input data-field-input id="fields_{{ $index }}_name" name="fields[{{ $index }}][name]" value="{{ $field['name'] ?? '' }}" required>
+            <input data-repeater-input id="fields_{{ $index }}_name" name="fields[{{ $index }}][name]" value="{{ $field['name'] ?? '' }}" required>
         </div>
         <div>
             <label for="fields_{{ $index }}_type">Type</label>
-            <select data-field-input id="fields_{{ $index }}_type" name="fields[{{ $index }}][type]">
+            <select data-repeater-input data-field-type id="fields_{{ $index }}_type" name="fields[{{ $index }}][type]">
                 @foreach ($fieldTypes as $value => $label)
                     <option value="{{ $value }}" @selected(($field['type'] ?? 'text') === $value)>{{ $label }}</option>
                 @endforeach
@@ -42,34 +42,44 @@
     <div class="grid-3">
         <div>
             <label for="fields_{{ $index }}_placeholder">Placeholder</label>
-            <input data-field-input id="fields_{{ $index }}_placeholder" name="fields[{{ $index }}][placeholder]" value="{{ $field['placeholder'] ?? '' }}">
+            <input data-repeater-input id="fields_{{ $index }}_placeholder" name="fields[{{ $index }}][placeholder]" value="{{ $field['placeholder'] ?? '' }}">
         </div>
         <div>
             <label for="fields_{{ $index }}_validation">Validation</label>
-            <input data-field-input id="fields_{{ $index }}_validation" name="fields[{{ $index }}][validation]" value="{{ $field['validation'] ?? '' }}">
+            <input data-repeater-input id="fields_{{ $index }}_validation" name="fields[{{ $index }}][validation]" value="{{ $field['validation'] ?? '' }}">
             <div class="hint">Examples: max:255, min:5|max:5000, mimes:pdf,jpg. Do not include backticks.</div>
         </div>
         <div>
             <label for="fields_{{ $index }}_sort_order">Sort order</label>
-            <input data-field-input id="fields_{{ $index }}_sort_order" name="fields[{{ $index }}][sort_order]" type="number" min="1" value="{{ $field['sort_order'] ?? ($index + 1) }}">
+            <input data-repeater-input id="fields_{{ $index }}_sort_order" name="fields[{{ $index }}][sort_order]" type="number" min="1" value="{{ $field['sort_order'] ?? ($index + 1) }}">
         </div>
     </div>
 
     <div class="grid-2">
         <div>
             <label for="fields_{{ $index }}_help_text">Help text</label>
-            <input data-field-input id="fields_{{ $index }}_help_text" name="fields[{{ $index }}][help_text]" value="{{ $field['help_text'] ?? '' }}">
+            <input data-repeater-input id="fields_{{ $index }}_help_text" name="fields[{{ $index }}][help_text]" value="{{ $field['help_text'] ?? '' }}">
         </div>
         <div>
-            <label for="fields_{{ $index }}_options">Options</label>
-            <textarea data-field-input id="fields_{{ $index }}_options" name="fields[{{ $index }}][options]">{{ $optionsValue }}</textarea>
-            <div class="hint">One option per line. Useful for select, radio, and checkbox fields.</div>
+            <label>Options</label>
+            <div class="option-builder stack-tight" data-option-panel hidden>
+                <textarea data-repeater-input data-option-store id="fields_{{ $index }}_options" name="fields[{{ $index }}][options]" hidden>{{ $optionsValue }}</textarea>
+                <div class="toolbar">
+                    <div class="section-title">
+                        <strong data-option-summary>No options yet</strong>
+                        <div class="hint">Use labels for the UI and values for what gets stored on submission.</div>
+                    </div>
+                    <button type="button" class="button tiny secondary" data-option-open>Add option</button>
+                </div>
+                <div class="option-preview" data-option-preview></div>
+            </div>
+            <div class="hint" data-option-disabled>Switch this field to Select, Radio, or Checkbox to manage options with the builder.</div>
         </div>
     </div>
 
     <label class="inline-check">
-        <input type="hidden" data-field-input name="fields[{{ $index }}][is_required]" value="0">
-        <input type="checkbox" data-field-input id="fields_{{ $index }}_is_required" name="fields[{{ $index }}][is_required]" value="1" @checked($field['is_required'] ?? false)>
+        <input type="hidden" data-repeater-input name="fields[{{ $index }}][is_required]" value="0">
+        <input type="checkbox" data-repeater-input id="fields_{{ $index }}_is_required" name="fields[{{ $index }}][is_required]" value="1" @checked($field['is_required'] ?? false)>
         <span>Required field</span>
     </label>
 </div>
